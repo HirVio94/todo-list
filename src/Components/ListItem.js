@@ -15,6 +15,7 @@ class ListItem extends React.Component {
 
     componentDidMount() {
         this.verfiPos();
+
     }
 
     deleteLi(event) {
@@ -22,6 +23,7 @@ class ListItem extends React.Component {
 
         let li = event.target.parentElement;
         li.remove();
+        this.affichageFleche();
     }
 
     done(event) {
@@ -42,18 +44,22 @@ class ListItem extends React.Component {
             i.nextSibling.attributes.class.value = '';
             li = parent.insertBefore(li, parent.firstChild);
         }
+        this.affichageFleche();
 
     }
 
     verfiPos() {
         if (document.getElementsByTagName('li').length > 0) {
             let liTab = document.getElementsByTagName('li');
+            console.log(liTab);
             if (liTab[liTab.length - 1].firstChild.attributes.class != DONE) {
                 let li = liTab[liTab.length - 1];
 
                 let parent = li.parentElement;
                 li = parent.insertBefore(li, parent.firstChild);
             }
+            this.affichageFleche();
+
         }
 
     }
@@ -71,6 +77,7 @@ class ListItem extends React.Component {
                 parent.appendChild(li);
             }
         }
+        this.affichageFleche();
 
 
 
@@ -81,11 +88,49 @@ class ListItem extends React.Component {
         let li = i.parentElement;
         let parent = li.parentElement;
 
-        if (li.firstChild.attributes.class.value != DONE && li.previousSibling){
+        if (li.firstChild.attributes.class.value != DONE && li.previousSibling) {
             let previousSibling = li.previousSibling;
             li = parent.insertBefore(li, previousSibling);
         }
+        this.affichageFleche();
     }
+
+    affichageFleche() {
+        let i;
+        let liTab = document.getElementsByTagName('li');
+        let tab = [];
+        for (i = 0; i < liTab.length; i++) {
+
+            tab.push(liTab[i]);
+
+            tab.map(li => {
+                if (li.firstChild.attributes.class.value == DONE || tab.length == 1) {
+                    li.lastChild.previousSibling.style.display = 'none';
+                    li.lastChild.previousSibling.previousSibling.style.display = 'none';
+                } else {
+                    if (tab.indexOf(li) == 0) {
+                        li.lastChild.previousSibling.style.display = 'none';
+                        li.lastChild.previousSibling.previousSibling.style.display = 'block';
+                    } else {
+                        if (tab.indexOf(li) == tab.length - 1 || li.nextSibling.firstChild.attributes.class.value == DONE) {
+                            li.lastChild.previousSibling.previousSibling.style.display = 'none';
+                            li.lastChild.previousSibling.style.display = 'block';
+
+                        } else {
+
+                            li.lastChild.previousSibling.previousSibling.style.display = 'block';
+                            li.lastChild.previousSibling.style.display = 'block';
+
+                        }
+                    }
+                };
+            })
+
+        }
+        console.log(tab);
+    }
+
+
 
     render() {
         // console.log('item-tache', this.state.tache)
